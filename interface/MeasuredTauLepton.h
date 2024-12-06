@@ -19,8 +19,8 @@ namespace classic_svFit
       kTauToMuDecay    /* < tau lepton decay to muon                                                         */
     };
 
-    MeasuredTauLepton();
-    MeasuredTauLepton(int, double, double, double, double, int = -1);
+    MeasuredTauLepton(int = 0);
+    MeasuredTauLepton(int, double, double, double, double, int = -1, int = 0);
     MeasuredTauLepton(const MeasuredTauLepton&);
     ~MeasuredTauLepton();
 
@@ -64,6 +64,12 @@ namespace classic_svFit
 
     void roundToNdigits(unsigned int nDigis = 3);
 
+    /// set verbosity level (0 - mute, 1 - print warning)
+    void setVerbosity(int aVerbosity);
+
+    /// return verbosity level
+    int verbosity() const;
+
    protected:
     /// set visible momentum in all coordinates systems
     void initialize();
@@ -103,6 +109,9 @@ namespace classic_svFit
     double cosPhi_sinTheta_;
     double sinPhi_sinTheta_;
     double cosTheta_;
+
+    /// verbosity level
+    int verbosity_;
   };
 }
 
