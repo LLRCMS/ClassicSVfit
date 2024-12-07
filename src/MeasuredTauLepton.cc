@@ -5,24 +5,26 @@
 
 using namespace classic_svFit;
 
-MeasuredTauLepton::MeasuredTauLepton()
+MeasuredTauLepton::MeasuredTauLepton(int verbosity)
   : type_(kUndefinedDecayType),
     pt_(0.),
     eta_(0.),
     phi_(0.),
     mass_(0.),
-    decayMode_(-1)
+    decayMode_(-1),
+    verbosity_(0)
 {
   initialize();
 }
 
-MeasuredTauLepton::MeasuredTauLepton(int type, double pt, double eta, double phi, double mass, int decayMode)
+MeasuredTauLepton::MeasuredTauLepton(int type, double pt, double eta, double phi, double mass, int decayMode, int verbosity)
   : type_(type),
     pt_(pt),
     eta_(eta),
     phi_(phi),
     mass_(mass),
-    decayMode_(decayMode)
+    decayMode_(decayMode),
+    verbosity_(verbosity)
 {
   //std::cout << "<MeasuredTauLepton>:" << std::endl;
   //std::cout << " Pt = " << pt_ << ", eta = " << eta_ << ", phi = " << phi_ << ", mass = " << mass_ << std::endl;
@@ -57,8 +59,10 @@ MeasuredTauLepton::MeasuredTauLepton(int type, double pt, double eta, double phi
       std::cerr << "Error: Invalid type " << type_ << " declared for leg: Pt = " << pt_ << ", eta = " << eta_ << ", phi = " << phi_ << ", mass = " << mass_ << " !!" << std::endl;
       assert(0);
     }
-    std::cerr << "Warning: " << type_string << " declared for leg: Pt = " << pt_ << ", eta = " << eta_ << ", phi = " << phi_ << ", mass = " << mass_ << " !!" << std::endl;
-    std::cerr << " (mass expected in the range = " << minVisMass << ".." << maxVisMass << ")" << std::endl;
+    if ( verbosity_ >= 1 ) {
+      std::cerr << "Warning: " << type_string << " declared for leg: Pt = " << pt_ << ", eta = " << eta_ << ", phi = " << phi_ << ", mass = " << mass_ << " !!" << std::endl;
+      std::cerr << " (mass expected in the range = " << minVisMass << ".." << maxVisMass << ")" << std::endl;
+    }
   }
   if ( preciseVisMass_ < minVisMass ) preciseVisMass_ = minVisMass;
   if ( preciseVisMass_ > maxVisMass ) preciseVisMass_ = maxVisMass;
@@ -72,7 +76,8 @@ MeasuredTauLepton::MeasuredTauLepton(const MeasuredTauLepton& measuredTauLepton)
     eta_(measuredTauLepton.eta()),
     phi_(measuredTauLepton.phi()),
     mass_(measuredTauLepton.mass()),
-    decayMode_(measuredTauLepton.decayMode())
+    decayMode_(measuredTauLepton.decayMode()),
+    verbosity_(measuredTauLepton.verbosity())
 {
   preciseVisMass_ = measuredTauLepton.mass();
   initialize();
@@ -108,12 +113,19 @@ double MeasuredTauLepton::cosTheta() const { return cosTheta_; }
 
 void MeasuredTauLepton::roundToNdigits(unsigned int nDigis)
 {
-pt_ = classic_svFit::roundToNdigits(pt_, nDigis);
-eta_ = classic_svFit::roundToNdigits(eta_, nDigis);
-phi_ = classic_svFit::roundToNdigits(phi_, nDigis);
-mass_ = classic_svFit::roundToNdigits(mass_, nDigis);
-initialize();
+  pt_ = classic_svFit::roundToNdigits(pt_, nDigis);
+  eta_ = classic_svFit::roundToNdigits(eta_, nDigis);
+  phi_ = classic_svFit::roundToNdigits(phi_, nDigis);
+  mass_ = classic_svFit::roundToNdigits(mass_, nDigis);
+  initialize();
 }
+
+void MeasuredTauLepton::setVerbosity(int aVerbosity)
+{
+  verbosity_ = aVerbosity;
+}
+
+int MeasuredTauLepton::verbosity() const { return verbosity_; }
 
 void MeasuredTauLepton::initialize()
 {
